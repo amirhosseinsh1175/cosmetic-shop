@@ -1,3 +1,4 @@
+// add basic validation to new product page
 import { useState } from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/router'
@@ -27,6 +28,8 @@ export default function NewProduct(){
 
   const submit = async (e:any)=>{
     e.preventDefault()
+    if(title.trim().length < 3) return alert('عنوان باید حداقل ۳ کاراکتر باشد')
+    if(!price || Number(price) <= 0) return alert('قیمت باید بزرگتر از صفر باشد')
     try{
       await axios.post('/api/admin/products/create',{ title, excerpt, description, price, brand, category, stock, images })
       router.push('/admin/products')

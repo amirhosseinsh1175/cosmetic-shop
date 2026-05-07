@@ -1,3 +1,4 @@
+// add simple client-side validation and image controls to edit product page
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/router'
@@ -26,6 +27,8 @@ export default function EditProduct(){
 
   const submit = async (e:any)=>{
     e.preventDefault()
+    if(!product.title || product.title.trim().length < 3) return alert('عنوان باید حداقل ۳ کاراکتر باشد')
+    if(!product.price || Number(product.price) <= 0) return alert('قیمت باید بزرگتر از صفر باشد')
     try{
       await axios.put(`/api/products/${id}`, product)
       router.push('/admin/products')
@@ -70,6 +73,18 @@ export default function EditProduct(){
           <div>
             <label className="block text-sm mb-1">دسته</label>
             <input className="w-full border rounded px-3 py-2" value={product.category} onChange={e=>setProduct({...product, category: e.target.value})} />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm mb-1">تصاویر فعلی</label>
+          <div className="grid grid-cols-3 gap-2">
+            {(product.images || []).map((im:string, idx:number)=> (
+              <div key={idx} className="border p-1 rounded relative">
+                <img src={im} className="w-full h-24 object-contain" />
+                <a className="text-xs text-blue-600 mt-1 block" href={`/admin/products/${id}/images`}>مدیریت تصاویر</a>
+              </div>
+            ))}
           </div>
         </div>
 
