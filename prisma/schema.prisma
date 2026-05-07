@@ -20,6 +20,7 @@ model Product {
   stock       Int      @default(0)
   rating      Float    @default(0)
   ratingCount Int      @default(0)
+  variants    Json?    @default("[]")
   createdAt   DateTime @default(now())
 }
 
@@ -35,5 +36,16 @@ model Order {
   id        Int @id @default(autoincrement())
   items     String
   amount    Int
+  status    String @default("pending")
   createdAt DateTime @default(now())
+}
+
+model Brand {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+}
+
+model Category {
+  id   Int    @id @default(autoincrement())
+  name String @unique
 }

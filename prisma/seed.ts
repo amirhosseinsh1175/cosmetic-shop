@@ -6,6 +6,14 @@ async function main(){
   await prisma.order.deleteMany()
   await prisma.product.deleteMany()
   await prisma.user.deleteMany()
+  await prisma.brand.deleteMany()
+  await prisma.category.deleteMany()
+
+  const brands = ['Vivi','Luxe','Dermacare']
+  for(const b of brands) await prisma.brand.create({ data: { name: b } })
+
+  const categories = ['مرطوب‌کننده','آرایش لب','سرم']
+  for(const c of categories) await prisma.category.create({ data: { name: c } })
 
   const products = [
     {
@@ -20,7 +28,8 @@ async function main(){
       oldPrice: 150000,
       brand: 'Vivi',
       category: 'مرطوب‌کننده',
-      stock: 25
+      stock: 25,
+      variants: [{ name: 'حجم 50ml', price: 120000, sku: 'CR-50' }]
     },
     {
       title: 'رژ لب مات لوکس',
@@ -32,7 +41,8 @@ async function main(){
       price: 89000,
       brand: 'Luxe',
       category: 'آرایش لب',
-      stock: 50
+      stock: 50,
+      variants: [{ name: 'رنگ قرمز', price: 89000, sku: 'LB-RED' }]
     },
     {
       title: 'سرم ضدچروک',
@@ -44,7 +54,8 @@ async function main(){
       price: 210000,
       brand: 'Dermacare',
       category: 'سرم',
-      stock: 10
+      stock: 10,
+      variants: [{ name: 'حجم 30ml', price: 210000, sku: 'SR-30' }]
     }
   ]
 
