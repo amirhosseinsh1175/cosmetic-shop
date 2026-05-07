@@ -1,8 +1,11 @@
 import { PrismaClient } from '@prisma/client'
+import bcrypt from 'bcryptjs'
 const prisma = new PrismaClient()
 
 async function main(){
   await prisma.product.deleteMany()
+  await prisma.user.deleteMany()
+
   const products = [
     {
       title: 'کرم مرطوب‌کننده ابریشم',
@@ -30,6 +33,13 @@ async function main(){
   for(const p of products){
     await prisma.product.create({ data: p })
   }
+
+  // create admin user
+  const adminEmail = process.env.ADMIN_EMAIL || 'admin@cosmetic.local'
+  const adminPassword = process.env.ADMIN_PASSWORD || 'Admin123!'
+  const hashed = bcrypt.hashSync(adminPassword, 10)
+  await prisma.user.create({ data: { email: adminEmail, password: hashed, name: 'ادمین', admin: true } })
+
   console.log('seeded')
 }
 

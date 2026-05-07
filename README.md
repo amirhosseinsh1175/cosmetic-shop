@@ -1,34 +1,43 @@
-# Cosmetic Shop - پروژه نمونه دانشگاهی
+# Cosmetic Shop - پروژه نمونه دانشگاهی (حرفه‌ای)
 
-نسخه اولیه یک فروشگاه لوازم آرایشی بهداشتی با:
+این ریپو نسخه ارتقا یافته‌ای از فروشگاه لوازم آرایشی بهداشتی است که شامل:
 - Next.js + TypeScript
 - Tailwind CSS (RTL)
-- Prisma (Postgres)
+- Prisma (MySQL)
+- Auth ساده با کوکی و JWT
+- docker-compose برای راه‌اندازی MySQL و Adminer
 
-دستورالعمل اجرا لوکال
+پیش‌نیازها
+- Node.js 18+
+- Docker (برای اجرای MySQL سریع)
 
-1) نمونه‌سازی ریپو و نصب پکیج‌ها:
+اجرای سریع (لوکال با Docker)
+
+1) کپی .env.example به .env و ویرایش مقادیر در صورت نیاز
+
+2) اجرا docker-compose:
+
+  docker-compose up -d
+
+3) نصب پکیج‌ها:
 
   npm install
 
-2) راه‌اندازی پایگاه داده (با docker-compose پیشنهاد می‌شود) یا نصب Postgres محلی و تنظیم DATABASE_URL در فایل .env بر اساس .env.example
-
-برای اجرای Postgres سریع با docker-compose (در آینده می‌توان فایل docker-compose.yml اضافه کرد):
-
-3) اجرای مایگریت و seed:
+4) تولید Prisma client و مایگریت و seed:
 
   npx prisma generate
   npx prisma migrate dev --name init
   npx ts-node --transpile-only prisma/seed.ts
 
-4) اجرای پروژه:
+5) اجرای برنامه:
 
   npm run dev
 
-ویژگی‌ها:
-- صفحه اصلی، فهرست محصولات، صفحه محصول، سبد خرید نمونه و پنل مدیریت نمونه.
-- API ساده برای محصولات و یک endpoint دستیار AI با پاسخ‌های پیش‌فرض.
+حساب ادمین اولیه (از .env.example):
+- ایمیل: admin@cosmetic.local
+- رمز: Admin123!
 
-توضیح فنی:
-- برای ثبت سفارش و مدیریت حرفه‌ای، endpointها و صفحات ادمین آماده را می‌توانید پس از اتصال به DB توسعه دهید.
+نکات
+- پرداخت در حالت تست / شبیه‌سازی است. برای فعال‌سازی Stripe تست یا واقعی باید کلیدها را اضافه کنیم.
+- دستیار هوش مصنوعی فعلاً با پاسخ‌های پیش‌فرض کار می‌کند — می‌توانیم OpenAI اضافه کنیم بعداً.
 
