@@ -1,43 +1,27 @@
-# Cosmetic Shop - پروژه نمونه دانشگاهی (حرفه‌ای)
+# Phase A complete: UI/UX polish (product cards & gallery)
 
-این ریپو نسخه ارتقا یافته‌ای از فروشگاه لوازم آرایشی بهداشتی است که شامل:
-- Next.js + TypeScript
-- Tailwind CSS (RTL)
-- Prisma (MySQL)
-- Auth ساده با کوکی و JWT
-- docker-compose برای راه‌اندازی MySQL و Adminer
+این کامیت شامل تغییرات مربوط به فاز A است:
 
-پیش‌نیازها
-- Node.js 18+
-- Docker (برای اجرای MySQL سریع)
+- افزودن کتابخانه‌های جدید: Swiper و Framer Motion (برای carousel و انیمیشن‌ها)
+- استفاده از next/image برای بهینه‌سازی تصویر
+- کارت محصول حرفه‌ای‌تر (components/ProductCard.tsx)
+- گالری محصول با Swiper (components/ProductGallery.tsx)
+- نمایش رتبه‌بندی با RatingStars
+- بهبود صفحه فهرست محصولات و صفحه محصول (تب‌ها، جزئیات، sidebar فیلتر)
+- به‌روزرسانی next.config.js برای اجازه دادن به تصاویر از images.unsplash.com
 
-اجرای سریع (لوکال با Docker)
+نحوهٔ اجرای محلی (پس از pull از repo):
 
-1) کپی .env.example به .env و ویرایش مقادیر در صورت نیاز
+1) نصب پکیج‌ها:
+   npm install
 
-2) اجرا docker-compose:
+2) اجرای docker-compose و دیتابیس و seed (مثل قبل):
+   docker-compose up -d
+   npx prisma generate
+   npx prisma migrate dev --name init
+   npx ts-node --transpile-only prisma/seed.ts
 
-  docker-compose up -d
+3) اجرا:
+   npm run dev
 
-3) نصب پکیج‌ها:
-
-  npm install
-
-4) تولید Prisma client و مایگریت و seed:
-
-  npx prisma generate
-  npx prisma migrate dev --name init
-  npx ts-node --transpile-only prisma/seed.ts
-
-5) اجرای برنامه:
-
-  npm run dev
-
-حساب ادمین اولیه (از .env.example):
-- ایمیل: admin@cosmetic.local
-- رمز: Admin123!
-
-نکات
-- پرداخت در حالت تست / شبیه‌سازی است. برای فعال‌سازی Stripe تست یا واقعی باید کلیدها را اضافه کنیم.
-- دستیار هوش مصنوعی فعلاً با پاسخ‌های پیش‌فرض کار می‌کند — می‌توانیم OpenAI اضافه کنیم بعداً.
-
+نکته: اگر با خطای مربوط به remote images برخورد کردی، مطمئن شو next.config.js را ری‌استارت کرده‌ای (سرور next)؛ next/image نیاز به restart برای بارگذاری تنظیمات جدید دارد.
