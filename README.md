@@ -1,27 +1,27 @@
-# Phase A complete: UI/UX polish (product cards & gallery)
+# User accounts & profile
 
-این کامیت شامل تغییرات مربوط به فاز A است:
+تغییرات جدید اضافه‌شده در این مرحله:
 
-- افزودن کتابخانه‌های جدید: Swiper و Framer Motion (برای carousel و انیمیشن‌ها)
-- استفاده از next/image برای بهینه‌سازی تصویر
-- کارت محصول حرفه‌ای‌تر (components/ProductCard.tsx)
-- گالری محصول با Swiper (components/ProductGallery.tsx)
-- نمایش رتبه‌بندی با RatingStars
-- بهبود صفحه فهرست محصولات و صفحه محصول (تب‌ها، جزئیات، sidebar فیلتر)
-- به‌روزرسانی next.config.js برای اجازه دادن به تصاویر از images.unsplash.com
+- ثبت‌نام کاربر: `POST /api/auth/register` و صفحه فرانت `pages/auth/register.tsx`
+- پروفایل کاربر: `GET/PUT /api/user/profile`
+- مدیریت آدرس‌ها: `GET/POST /api/user/addresses` و `PUT/DELETE /api/user/addresses/[id]`
+- نمایش سفارشات کاربر: `GET /api/user/orders`
+- صفحات فرانت برای کاربر: `/account`، `/account/addresses`، `/account/orders`
 
-نحوهٔ اجرای محلی (پس از pull از repo):
+نکات اجرایی بعد از pull:
 
-1) نصب پکیج‌ها:
-   npm install
+1) نَسخه جدید اسکیمای Prisma را اعمال کن:
 
-2) اجرای docker-compose و دیتابیس و seed (مثل قبل):
-   docker-compose up -d
-   npx prisma generate
-   npx prisma migrate dev --name init
-   npx ts-node --transpile-only prisma/seed.ts
+  npx prisma generate
+  npx prisma migrate dev --name add_user_order_address
+
+2) سپس seed جدید را اجرا کن تا یک کاربر نمونه و آدرس ساخته شود:
+
+  npx ts-node --transpile-only prisma/seed.ts
 
 3) اجرا:
-   npm run dev
 
-نکته: اگر با خطای مربوط به remote images برخورد کردی، مطمئن شو next.config.js را ری‌استارت کرده‌ای (سرور next)؛ next/image نیاز به restart برای بارگذاری تنظیمات جدید دارد.
+  npm run dev
+
+ایمیلی که برای ورود ادمین قبلاً استفاده شده: admin@cosmetic.local / Admin123!
+

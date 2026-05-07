@@ -30,6 +30,8 @@ model User {
   name     String?
   password String
   admin    Boolean @default(false)
+  addresses Address[]
+  orders    Order[]
 }
 
 model Order {
@@ -38,6 +40,8 @@ model Order {
   amount    Int
   status    String @default("pending")
   createdAt DateTime @default(now())
+  userId    Int?
+  user      User?  @relation(fields: [userId], references: [id])
 }
 
 model Brand {
@@ -48,4 +52,15 @@ model Brand {
 model Category {
   id   Int    @id @default(autoincrement())
   name String @unique
+}
+
+model Address {
+  id         Int    @id @default(autoincrement())
+  userId     Int
+  title      String?
+  fullname   String
+  phone      String
+  postalCode String?
+  address    String
+  user       User   @relation(fields: [userId], references: [id])
 }

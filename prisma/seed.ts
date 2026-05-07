@@ -8,6 +8,7 @@ async function main(){
   await prisma.user.deleteMany()
   await prisma.brand.deleteMany()
   await prisma.category.deleteMany()
+  await prisma.address.deleteMany()
 
   const brands = ['Vivi','Luxe','Dermacare']
   for(const b of brands) await prisma.brand.create({ data: { name: b } })
@@ -68,6 +69,14 @@ async function main(){
   const adminPassword = process.env.ADMIN_PASSWORD || 'Admin123!'
   const hashed = bcrypt.hashSync(adminPassword, 10)
   await prisma.user.create({ data: { email: adminEmail, password: hashed, name: 'ادمین', admin: true } })
+
+  // create a sample customer user
+  const custEmail = 'user1@cosmetic.local'
+  const custPass = bcrypt.hashSync('User123!', 10)
+  const user = await prisma.user.create({ data: { email: custEmail, password: custPass, name: 'کاربر نمونه' } })
+
+  // sample address
+  await prisma.address.create({ data: { userId: user.id, title: 'خانه', fullname: 'علی آزمایشی', phone: '09120000000', postalCode: '1234567890', address: 'تهران، خیابان نمونه، پلاک ۱' } })
 
   console.log('seeded')
 }
