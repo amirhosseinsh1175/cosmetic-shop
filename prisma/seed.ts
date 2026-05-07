@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs'
 const prisma = new PrismaClient()
 
 async function main(){
+  await prisma.order.deleteMany()
   await prisma.product.deleteMany()
   await prisma.user.deleteMany()
 
@@ -11,27 +12,44 @@ async function main(){
       title: 'کرم مرطوب‌کننده ابریشم',
       excerpt: 'کرم مرطوب‌کننده سبک و تغذیه‌کننده',
       description: 'این کرم با فرمولاسیون سبک، پوست را آبرسانی و شاداب می‌کند. مناسب روزانه.',
-      image: 'https://images.unsplash.com/photo-1542831371-d531d36971e6?w=1200&q=80',
-      price: 120000
+      images: [
+        'https://images.unsplash.com/photo-1542831371-d531d36971e6?w=1200&q=80',
+        'https://images.unsplash.com/photo-1508182312256-9b0c6a3b6f6e?w=1200&q=80'
+      ],
+      price: 120000,
+      oldPrice: 150000,
+      brand: 'Vivi',
+      category: 'مرطوب‌کننده',
+      stock: 25
     },
     {
       title: 'رژ لب مات لوکس',
       excerpt: 'رنگدانه بالا با ماندگاری طولانی',
       description: 'رژ لب با بافت مات، مناسب تمام روز و چندین رنگ جذاب.',
-      image: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=1200&q=80',
-      price: 89000
+      images: [
+        'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=1200&q=80'
+      ],
+      price: 89000,
+      brand: 'Luxe',
+      category: 'آرایش لب',
+      stock: 50
     },
     {
       title: 'سرم ضدچروک',
       excerpt: 'حاوی ویتامین C و پپتید',
       description: 'سرم تخصصی برای کاهش خطوط ریز و بهبود بافت پوست.',
-      image: 'https://images.unsplash.com/photo-1549989479-8a8d4b2c6f3a?w=1200&q=80',
-      price: 210000
+      images: [
+        'https://images.unsplash.com/photo-1549989479-8a8d4b2c6f3a?w=1200&q=80'
+      ],
+      price: 210000,
+      brand: 'Dermacare',
+      category: 'سرم',
+      stock: 10
     }
   ]
 
   for(const p of products){
-    await prisma.product.create({ data: p })
+    await prisma.product.create({ data: p as any })
   }
 
   // create admin user

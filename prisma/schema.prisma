@@ -8,12 +8,19 @@ datasource db {
 }
 
 model Product {
-  id          Int     @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   title       String
   excerpt     String
   description String
-  image       String
+  images      Json     @default("[]")
   price       Int
+  oldPrice    Int?
+  brand       String?
+  category    String?
+  stock       Int      @default(0)
+  rating      Float    @default(0)
+  ratingCount Int      @default(0)
+  createdAt   DateTime @default(now())
 }
 
 model User {
