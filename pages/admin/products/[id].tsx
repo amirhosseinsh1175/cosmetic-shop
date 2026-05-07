@@ -1,4 +1,3 @@
-// add simple client-side validation and image controls to edit product page
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/router'
@@ -8,6 +7,9 @@ export default function EditProduct(){
   const { id } = router.query
   const [product, setProduct] = useState<any>(null)
   const [filePreview, setFilePreview] = useState<string | null>(null)
+  const [variantName, setVariantName] = useState('')
+  const [variantPrice, setVariantPrice] = useState<number | ''>('')
+  const [variantSku, setVariantSku] = useState('')
 
   useEffect(()=>{
     if(!id) return
@@ -17,12 +19,37 @@ export default function EditProduct(){
   const onFile = (e:any)=>{
     const f = e.target.files?.[0]
     if(!f) return
-    const reader = new FileReader()
-    reader.onload = ()=>{
-      setFilePreview(reader.result as string)
-      setProduct({...product, images: [...(product.images||[]), reader.result]})
-    }
-    reader.readAsDataURL(f)
+    (async ()=>{
+      try{
+        const fd = new FormData()
+        fd.append('file', f)
+        const r = await fetch('/api/admin/products/upload', { method: 'POST', body: fd })
+        const data = await r.json()
+        if(data?.url){
+          setFilePreview(URL.createObjectURL(f))
+          setProduct({...product, images: [...(product.images||[]), data.url]})
+        } else {
+          alert('خطا در آپلود تصویر')
+        }
+      }catch(e){
+        alert('خطا در آپلود')
+      }
+    })()
+  }
+
+  const addVariant = ()=>{
+    if(!variantName || !variantPrice) return alert('نام و قیمت variant لازم است')
+    const arr = [...(product.variants||[]), { name: variantName, price: Number(variantPrice), sku: variantSku }]
+    setProduct({...product, variants: arr})
+    setVariantName('')
+    setVariantPrice('')
+    setVariantSku('')
+  }
+
+  const removeVariant = (idx:number)=>{
+    const arr = [...(product.variants||[])]
+    arr.splice(idx,1)
+    setProduct({...product, variants: arr})
   }
 
   const submit = async (e:any)=>{
@@ -92,6 +119,26 @@ export default function EditProduct(){
           <label className="block text-sm mb-1">افزودن تصویر جدید</label>
           <input type="file" accept="image/*" onChange={onFile} />
           {filePreview && <img src={filePreview} className="h-32 mt-3 object-contain" />}
+        </div>
+
+        <div className="bg-gray-50 p-3 rounded">
+          <h3 className="font-semibold mb-2">تنوع‌های محصول (Variants)</h3>
+          <div className="grid grid-cols-3 gap-2 mb-2">
+            <input placeholder="نام (مثلا: رنگ قرمز)" className="border rounded px-2 py-1" value={variantName} onChange={e=>setVariantName(e.target.value)} />
+            <input placeholder="قیمت" type="number" className="border rounded px-2 py-1" value={variantPrice as any} onChange={e=>setVariantPrice(e.target.value)} />
+            <input placeholder="SKU (اختیاری)" className="border rounded px-2 py-1" value={variantSku} onChange={e=>setVariantSku(e.target.value)} />
+          </div>
+          <div className="flex gap-2 mb-2">
+            <button type="button" className="bg-blue-600 text-white px-3 py-1 rounded" onClick={addVariant}>افزودن تنوع</button>
+          </div>
+          <div>
+            {(product.variants || []).map((v:any,idx:number)=> (
+              <div key={idx} className="flex items-center gap-3 mb-1">
+                <div className="flex-1">{v.name} — {v.price} تومان {v.sku && <span className="text-sm text-gray-500">({v.sku})</span>}</div>
+                <button type="button" className="text-red-600 text-sm" onClick={()=>removeVariant(idx)}>حذف</button>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="flex items-center gap-3">

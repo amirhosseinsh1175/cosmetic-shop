@@ -8,14 +8,17 @@ import { useEffect, useState } from 'react'
 export default function ProductPage(){
   const [product, setProduct] = useState<any>(null)
   const [tab, setTab] = useState<'desc'|'spec'|'reviews'>('desc')
+  const [selectedVariant, setSelectedVariant] = useState<any>(null)
 
   useEffect(()=>{
     const id = window.location.pathname.split('/').pop()
     if(!id) return
-    axios.get(`/api/products/${id}`).then(r => setProduct(r.data))
+    axios.get(`/api/products/${id}`).then(r => { setProduct(r.data); setSelectedVariant((r.data.variants && r.data.variants[0]) || null) })
   }, [])
 
   if(!product) return <div className="p-8">در حال بارگذاری...</div>
+
+  const displayPrice = selectedVariant ? selectedVariant.price : product.price
 
   return (
     <>
@@ -51,8 +54,23 @@ export default function ProductPage(){
           </div>
 
           <aside className="bg-white rounded shadow p-4">
-            <div className="text-pink-600 text-2xl font-bold">{product.price} تومان</div>
+            <div className="text-pink-600 text-2xl font-bold">{displayPrice} تومان</div>
             {product.oldPrice && <div className="text-sm text-gray-400 line-through">{product.oldPrice} تومان</div>}
+
+            {product.variants && product.variants.length > 0 && (
+              <div className="mt-3">
+                <label className="block text-sm mb-1">انتخاب تنوع</label>
+                <select className="w-full border rounded px-3 py-2" value={selectedVariant ? selectedVariant.name : ''} onChange={(e)=>{
+                  const v = product.variants.find((x:any)=>x.name===e.target.value)
+                  setSelectedVariant(v)
+                }}>
+                  {product.variants.map((v:any,idx:number)=> (
+                    <option key={idx} value={v.name}>{v.name} — {v.price} تومان</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             <div className="mt-4">
               <button className="w-full bg-pink-600 text-white px-4 py-2 rounded">افزودن به سبد</button>
             </div>

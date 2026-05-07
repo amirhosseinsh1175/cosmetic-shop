@@ -7,6 +7,7 @@ export default function ProductImages(){
   const { id } = router.query
   const [images, setImages] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
+  const [dragIndex, setDragIndex] = useState<number | null>(null)
 
   useEffect(()=>{
     if(!id) return
@@ -19,14 +20,24 @@ export default function ProductImages(){
     setImages(images.filter(i=>i!==url))
   }
 
-  const move = (index:number, dir:number)=>{
+  const onDragStart = (e: React.DragEvent, index:number) =>{
+    setDragIndex(index)
+    e.dataTransfer.effectAllowed = 'move'
+  }
+
+  const onDragOver = (e: React.DragEvent) =>{
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+  }
+
+  const onDrop = (e: React.DragEvent, index:number) =>{
+    e.preventDefault()
+    if(dragIndex === null) return
     const arr = [...images]
-    const to = index + dir
-    if(to <0 || to >= arr.length) return
-    const tmp = arr[to]
-    arr[to] = arr[index]
-    arr[index] = tmp
+    const [moved] = arr.splice(dragIndex, 1)
+    arr.splice(index, 0, moved)
     setImages(arr)
+    setDragIndex(null)
   }
 
   const saveOrder = async ()=>{
@@ -43,11 +54,17 @@ export default function ProductImages(){
         {images.length===0 ? <div>تصویری وجود ندارد.</div> : (
           <div className="grid grid-cols-2 gap-3">
             {images.map((im, idx)=> (
-              <div key={im} className="border p-2 rounded relative">
+              <div key={im} className="border p-2 rounded relative" draggable onDragStart={(e)=>onDragStart(e, idx)} onDragOver={onDragOver} onDrop={(e)=>onDrop(e, idx)}>
                 <img src={im} className="w-full h-40 object-contain" />
                 <div className="flex items-center gap-2 mt-2">
-                  <button className="px-2 py-1 bg-gray-100 rounded" onClick={()=>move(idx, -1)}>بالا</button>
-                  <button className="px-2 py-1 bg-gray-100 rounded" onClick={()=>move(idx, 1)}>پایین</button>
+                  <button className="px-2 py-1 bg-gray-100 rounded" onClick={()=>{
+                    const arr = [...images]
+                    if(idx>0){ arr.splice(idx-1,0,arr.splice(idx,1)[0]); setImages(arr) }
+                  }}>بالا</button>
+                  <button className="px-2 py-1 bg-gray-100 rounded" onClick={()=>{
+                    const arr = [...images]
+                    if(idx < arr.length-1){ arr.splice(idx+1,0,arr.splice(idx,1)[0]); setImages(arr) }
+                  }}>پایین</button>
                   <button className="px-2 py-1 bg-red-600 text-white rounded" onClick={()=>remove(im)}>حذف</button>
                 </div>
               </div>
