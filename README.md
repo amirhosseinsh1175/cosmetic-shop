@@ -1,27 +1,14 @@
-# User accounts & profile
+# Stripe (تست) setup
 
-تغییرات جدید اضافه‌شده در این مرحله:
+برای فعال‌سازی پرداخت تستی Stripe، مقادیر زیر را در فایل `.env` قرار دهید (هرگز کلیدها را در repo عمومی نگذارید):
 
-- ثبت‌نام کاربر: `POST /api/auth/register` و صفحه فرانت `pages/auth/register.tsx`
-- پروفایل کاربر: `GET/PUT /api/user/profile`
-- مدیریت آدرس‌ها: `GET/POST /api/user/addresses` و `PUT/DELETE /api/user/addresses/[id]`
-- نمایش سفارشات کاربر: `GET /api/user/orders`
-- صفحات فرانت برای کاربر: `/account`، `/account/addresses`، `/account/orders`
+STRIPE_SECRET_KEY=sk_test_xxx
+STRIPE_PUBLISHABLE_KEY=pk_test_xxx
+STRIPE_WEBHOOK_SECRET=whsec_xxx
 
-نکات اجرایی بعد از pull:
+توضیح:
+- برای تست لوکال می‌توانید از Stripe CLI برای ایجاد webhook و دریافت `STRIPE_WEBHOOK_SECRET` استفاده کنید:
+  stripe listen --forward-to localhost:3000/api/checkout/webhook
 
-1) نَسخه جدید اسکیمای Prisma را اعمال کن:
-
-  npx prisma generate
-  npx prisma migrate dev --name add_user_order_address
-
-2) سپس seed جدید را اجرا کن تا یک کاربر نمونه و آدرس ساخته شود:
-
-  npx ts-node --transpile-only prisma/seed.ts
-
-3) اجرا:
-
-  npm run dev
-
-ایمیلی که برای ورود ادمین قبلاً استفاده شده: admin@cosmetic.local / Admin123!
-
+نکته دربارهٔ ارزها:
+- این پیاده‌سازی از USD برای پرداخت تست استفاده می‌کند و قیمت محصولات (تومان) برای Stripe به‌صورت تقریبی تبدیل شده است. برای محیط واقعی باید نرخ تبدیل و واحد پول را مناسب تنظیم کنید.
