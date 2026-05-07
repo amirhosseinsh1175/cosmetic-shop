@@ -1,0 +1,20 @@
+const onFile = (e:any)=>{
+    const f = e.target.files?.[0]
+    if(!f) return
+    (async ()=>{
+      try{
+        const fd = new FormData()
+        fd.append('file', f)
+        const r = await fetch('/api/admin/products/upload', { method: 'POST', body: fd })
+        const data = await r.json()
+        if(data?.url){
+          setImages([...images, data.url])
+          setFilePreview(URL.createObjectURL(f))
+        } else {
+          alert('خطا در آپلود تصویر')
+        }
+      }catch(e){
+        alert('خطا در آپلود')
+      }
+    })()
+  }
